@@ -1,0 +1,6 @@
+---
+# tasks file for arillso.mariadb
+
+- name: Update Cache
+  apt:
+    update_cache: yes
