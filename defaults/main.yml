@@ -1,2 +1,20 @@
 ---
 # defaults file for arillso.mariadb
+
+# mariadb version
+mariadb_version: 10.2
+
+# mariadb data location
+mariadb_datadir: /var/lib/mysql
+
+# mariadb bind address
+mariadb_bind_address: 127.0.0.1
+
+# mariadb bind port
+mariadb_bind_port: 3306
+
+# Passphrase for SSL CA private key.
+mariadb_ca_privatekey_passphrase: ''
+
+# Enable mariadb SSL encryption.
+mariadb_ssl: false

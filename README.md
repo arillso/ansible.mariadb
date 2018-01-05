@@ -4,6 +4,8 @@
 
 ## Description
 
+installs and configures MariaDB.
+
 ## Installation
 
 ```bash
@@ -16,10 +18,14 @@ ansible-galaxy install arillso.mariadb
 
 | Variable             | Default     | Comments (type)                                   |
 | :---                 | :---        | :---                                              |
-| | | |
-| | | |
+| mariadb_version | 10.2 | mariadb version |
+| mariadb_datadir | /var/lib/mysql | mariadb data location |
+| mariadb_bind_address | 127.0.0.1 | mariadb bind address |
+| mariadb_bind_port | 3306 | mariadb bind port |
 
 ## Dependencies
+
+None
 
 ## Example Playbook
 
@@ -30,6 +36,10 @@ ansible-galaxy install arillso.mariadb
 ```
 
 ## Changelog
+
+### 1.0
+
+* inital role
 
 ## Author
 
