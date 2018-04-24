@@ -14,6 +14,7 @@ port                    = {{ mariadb_bind_port }}
 basedir                 = /usr
 datadir                 = {{ mariadb_datadir }}
 tmpdir                  = /tmp
+plugin-load-add         = auth_socket.so
 skip-external-locking
 
 # Instead of skip-networking the default is now to listen only on
