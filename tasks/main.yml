@@ -109,13 +109,6 @@
   tags:
     - configuration
 
-
-- name: flush handlers
-  meta: flush_handlers
-  tags:
-    - configuration
-    - packages
-
 - block:
     - name: generates the root password
       set_fact:
@@ -146,3 +139,9 @@
   when: not mariadb_register_root_mycnf.stat.exists
   tags:
     - configuration
+
+- name: flush handlers
+  meta: flush_handlers
+  tags:
+    - configuration
+    - packages
