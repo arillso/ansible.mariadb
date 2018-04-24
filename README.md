@@ -37,6 +37,11 @@ None
 
 ## Changelog
 
+### 1.2
+
+* add plugin-load-add
+* change flush handlers
+
 ### 1.1
 
 * fix errors
