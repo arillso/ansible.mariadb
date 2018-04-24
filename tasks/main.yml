@@ -1,8 +1,9 @@
 ---
 # tasks file for arillso.mariadb
 
+
 - name: add OS specific variables
-  include_vars: "{{ item }}"
+  include_vars: "{{ loop_vars }}"
   with_first_found:
     - files:
         - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
@@ -12,74 +13,108 @@
         - "defaults.yml"
       paths:
         - "vars"
+  loop_control:
+    loop_var: loop_vars
   tags:
     - configuration
     - packages
 
-- name: Distribution | Include
-  include_tasks: "{{ item }}"
+- name: include distribution tasks
+  include_tasks: "{{ loop_distribution }}"
   with_first_found:
     - files:
         - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
         - "{{ ansible_distribution }}.yml"
         - "{{ ansible_os_family }}.yml"
         - "defaults.yml"
       paths:
         - "distribution"
+  loop_control:
+    loop_var: loop_distribution
   tags:
     - configuration
     - packages
 
 - name: install mariadb
+  become: true
   package:
-    name: '{{ mariadb_packages }}'
+    name: "{{ mariadb_packages }}"
     state: present
   notify:
-    - 'mariadb restart daemon'
-    - 'mariadb remove anonymous users'
-    - 'mariadb remove test database'
+    - "mariadb restart"
+    - "mariadb enable"
+    - "mariadb remove anonymous users"
+    - "mariadb remove test database"
   tags:
     - packages
 
-- name: create mariadb configuration
+- name: "create {{ mariadb_run_dir }} directory"
+  file:
+    path: "{{ item }}"
+    owner: "{{ mariadb_user }}"
+    group: root
+    mode: 0755
+    seuser: unconfined_u
+    serole: object_r
+    setype: var_run_t
+    selevel: s0
+    state: directory
+  notify:
+    - "mariadb check config and restart"
+  with_items:
+    - "{{ mariadb_run_dir }}"
+  tags:
+    - configuration
+
+- name: create mariadb main configuration
+  become: true
   template:
     src: etc/my.cnf.j2
-    dest: '{{ mariadb_conf }}'
+    dest: "{{ mariadb_conf }}"
     owner: root
     group: root
     mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: mysqld_etc_t
+    selevel: s0
   notify:
-    - 'mariadb check config and restart'
+    - "mariadb check config and restart"
   tags:
     - configuration
 
 - name: create mariadb component configurations
+  become: true
   template:
     src: etc/conf.d/{{ item }}.cnf.j2
-    dest: '{{ mariadb_conf_dir }}/{{ item }}.cnf'
+    dest: "{{ mariadb_conf_dir }}/{{ item }}.cnf"
     owner: root
     group: root
-    mode: 06440
-  with_items: '{{ mariadb_conf_files }}'
+    mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: mysqld_etc_t
+    selevel: s0
+  with_items: "{{ mariadb_conf_files }}"
   notify:
-    - 'mariadb check config and restart'
-  tags:
-    - configuration
-
-- name: enable mariadb service
-  service:
-    name: '{{ mariadb_service }}'
-    state: started
-    enabled: yes
+    - "mariadb check config and restart"
   tags:
     - configuration
 
 - name: check if root my.cnf exists
   stat:
-    path: '{{ mariadb_root_mycnf }}'
+    path: "{{ mariadb_root_mycnf }}"
   register: mariadb_register_root_mycnf
   tags:
     - configuration
+
+
+- name: flush handlers
+  meta: flush_handlers
+  tags:
+    - configuration
+    - packages
 
 - block:
     - name: generates the root password
@@ -89,26 +124,25 @@
     - name: create root password
       mysql_user:
         name: root
-        host_all: yes
-        password: '{{ mariadb_root_password }}'
+        host_all: true
+        password: "{{ mariadb_root_password }}"
         update_password: always
-        check_implicit_admin: yes
-        login_unix_socket: '{{ mariadb_socket }}'
+        check_implicit_admin: true
+        login_unix_socket: "{{ mariadb_socket }}"
         state: present
 
     - name: create root my.cnf
       template:
         src: root/my.cnf.j2
-        dest: '{{ mariadb_root_mycnf }}'
+        dest: "{{ mariadb_root_mycnf }}"
         owner: root
         group: root
         mode: 0600
+        seuser: system_u
+        serole: object_r
+        setype: admin_home_t
+        selevel: s0
+
   when: not mariadb_register_root_mycnf.stat.exists
   tags:
     - configuration
-
-- name: flush handlers
-  meta: flush_handlers
-  tags:
-    - configuration
-    - packages

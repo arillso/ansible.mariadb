@@ -5,7 +5,6 @@ mariadb_packages:
   - mysql
   - mysql-server
   - MySQL-python
-  - pwgen
   - pyOpenSSL
 
 # mariadb service name
@@ -15,13 +14,13 @@ mariadb_service: mysqld
 mariadb_user: mysql
 
 # mariadb server binary
-mariadb_server_bin: /usr/libexec/mysqld
+mariadb_server_bin: mysqld
 
 # global mariadb configuration file location
 mariadb_conf: /etc/my.cnf
 
 # global mariadb configuration directory
-mariadb_conf_dir: /etc/mysql/conf.d
+mariadb_conf_dir: /etc/my.cnf.d
 
 # mariadb configuration files
 mariadb_conf_files:

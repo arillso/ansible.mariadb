@@ -2,16 +2,31 @@
 # handlers file for arillso.mariadb
 
 - name: mariadb check config and restart
+  become: true
   shell: '{{ mariadb_server_bin }} --help --verbose --skip-networking 1>/dev/null'
   notify:
-    - 'mariadb restart daemon'
+    - 'mariadb restart'
 
-- name: mariadb restart daemon
+- name: mariadb restart
+  become: true
   service:
     name: '{{ mariadb_service }}'
     state: restarted
 
+- name: mariadb start
+  become: true
+  service:
+    name: '{{ mariadb_service }}'
+    state: started
+
+- name: mariadb enable
+  become: true
+  service:
+    name: '{{ mariadb_service }}'
+    enabled: true
+
 - name: mariadb remove anonymous users
+  become: true
   mysql_user:
     name: ''
     host: '{{ item }}'
@@ -20,6 +35,7 @@
   with_items: '{{ mariadb_anon_user_hosts }}'
 
 - name: mariadb remove test database
+  become: true
   mysql_db:
     name: test
     login_unix_socket: '{{ mariadb_socket }}'
