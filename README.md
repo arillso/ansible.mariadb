@@ -37,6 +37,11 @@ None
 
 ## Changelog
 
+### 1.1
+
+* fix errors
+* add official MariaDB Repository
+
 ### 1.0
 
 * inital role
