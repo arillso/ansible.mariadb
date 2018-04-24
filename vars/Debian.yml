@@ -1,6 +1,8 @@
 ---
 # vars file for arillso.mariadb
 
+mariadb_repo_key: 0xcbcb082a1bb943db
+
 mariadb_packages:
   - mariadb-server
   - mariadb-client
