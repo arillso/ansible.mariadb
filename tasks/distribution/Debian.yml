@@ -1,6 +1,17 @@
 ---
 # tasks file for arillso.mariadb
 
-- name: Update Cache
-  apt:
-    update_cache: yes
+- name: "{{ ansible_distribution | lower }} | add key"
+  become: true
+  apt_key:
+    keyserver: "hkp://keyserver.ubuntu.com:80"
+    id: "{{ mariadb_repo_key }}"
+    state: "present"
+
+- name: "{{ ansible_distribution | lower }} | add repository"
+  become: true
+  apt_repository:
+    repo: "deb [arch=amd64,i386] http://mirror.23media.de/mariadb/repo/{{ mariadb_version }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }} main"
+    state: present
+    filename: "mariadb"
+    update_cache: true

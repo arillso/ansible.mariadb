@@ -5,7 +5,6 @@ mariadb_packages:
   - mariadb
   - mariadb-server
   - MySQL-python
-  - pwgen
   - pyOpenSSL
 
 # mariadb service name
