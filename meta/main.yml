@@ -1,6 +1,7 @@
 ---
 
 galaxy_info:
+  role_name: mariadb
   author: arillso
   description: installs and configures MariaDB
   license: MIT

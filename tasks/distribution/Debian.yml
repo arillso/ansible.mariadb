@@ -7,6 +7,8 @@
     keyserver: "hkp://keyserver.ubuntu.com:80"
     id: "{{ mariadb_repo_key }}"
     state: "present"
+  tags:
+    - packages
 
 - name: "{{ ansible_distribution | lower }} | add repository"
   become: true
@@ -15,3 +17,5 @@
     state: present
     filename: "mariadb"
     update_cache: true
+  tags:
+    - packages
