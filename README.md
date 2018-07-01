@@ -40,6 +40,7 @@ None
 ### 1.2.1
 
 * add support for Ubuntu 18.04
+* add tags
 
 ### 1.2
 
